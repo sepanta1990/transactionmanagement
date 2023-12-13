@@ -20,6 +20,7 @@ public class TransactionController {
 
 
     private final TransactionService transactionService;
+
     @Autowired
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
@@ -50,8 +51,15 @@ public class TransactionController {
         return transactionService.getTransaction(transactionId);
     }
 
-    @ExceptionHandler({AccountNotFoundException.class, TransactionNotFoundException.class, BadRequestException.class})
+    @ExceptionHandler({AccountNotFoundException.class, TransactionNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
